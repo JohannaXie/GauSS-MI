@@ -1,0 +1,69 @@
+Dataset:
+  type: 'active'
+
+  Calibration:
+    fx: 240.0
+    fy: 240.0
+    cx: 320.0
+    cy: 240.0
+    width: 640
+    height: 480
+    distorted: False
+    k1: 0.0
+    k2: 0.0
+    p1: 0.0
+    p2: 0.0
+    k3: 0.0
+    depth_scale: 1.0
+
+
+ViewPlan:
+  fsm_frequency: 10.0
+  start_x: 0.0
+  start_y: 0.0
+  start_z: 1.0
+  start_yaw_deg: 0.0    # degrees
+
+  ###### Customize to your config ######
+  plan_time: 1.6            # seconds
+  y_action_unit: 0.3          # meters
+  z_action_unit: 0.4
+  yaw_action_unit_deg: 40.0   # degrees
+
+  max_num_previous_vps: 100
+  pre_max_pos_dist: 0.3  # meters
+  pre_max_yaw_diff: 10.0    # degrees
+  pre_discount_coeff: 0.95
+
+  done_alpha: 0.95
+  done_prob: 0.7
+  done_threshold: 75
+
+
+Save:
+  save_results: True
+  save_folder: "active_rw_test1"
+  save_dir: "xxx"    # will be updated by `save_folder` in the main code
+
+
+Mapping:
+  interested_region: True
+
+  ###### Customize to your config ######
+  # bounding box of the interested region, also workspace
+  interest_x_min: -0.5
+  interest_x_max: 4.5
+  interest_y_min: -2.0
+  interest_y_max: 2.0
+  interest_z_min: -0.5
+  interest_z_max: 2.5
+  # object margin
+  object_margin_xy: 0.7
+  object_margin_z: 0.5
+
+
+Detection: 
+  depth_min_dist: 0.05
+  depth_max_dist: 7.0
+
+  fov: 90.0     # degree

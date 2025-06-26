@@ -1,0 +1,64 @@
+Results:
+  use_gui: True
+  wait_sec: 60
+
+Dataset:
+  pcd_downsample: 32
+  pcd_downsample_init: 32
+  adaptive_pointsize: True
+  point_size: 0.01
+
+Training:
+  #Initialization
+  init_itr_num: 1050
+  init_gaussian_update: 100
+  init_gaussian_reset: 500
+  init_gaussian_th: 0.005
+  init_gaussian_extent: 30
+
+  # Mapping
+  mapping_itr_num: 20
+  gaussian_update_every: 20
+  gaussian_update_offset: 10
+  gaussian_th: 0.7
+  gaussian_extent: 1.0
+  gaussian_reset: 2001
+  size_threshold: 20
+  window_size: 8
+  rgb_boundary_threshold: 0.01
+  alpha: 0.9
+  isotropic_coeff: 10
+  
+  # keyframing
+  kf_cutoff: 0.3
+  spherical_harmonics: False
+
+GauSS_MI:
+  reli_touch_threshold: 5
+  reli_min_loss: 0.0001
+  reli_lambda_L: 1.7
+  reli_lambda_T: 10.0
+  loss_rgb_alpha: 0.95
+
+# 3DGS Optimization
+opt_params:
+  iterations: 30000
+  position_lr_init: 0.00016
+  position_lr_final: 0.0000016
+  position_lr_delay_mult: 0.01
+  position_lr_max_steps: 30000
+  feature_lr: 0.0025
+  opacity_lr: 0.05
+  scaling_lr: 0.001
+  rotation_lr: 0.001
+  percent_dense: 0.01
+  lambda_dssim: 0.2
+  densify_from_iter: 500
+  densify_grad_threshold: 0.002
+
+model_params:
+  white_background: True
+
+pipeline_params:
+  convert_SHs_python: False
+  compute_cov3D_python: False

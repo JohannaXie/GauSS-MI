@@ -1,13 +1,28 @@
 <div align="center">
-    <h1>GauSS-MI: Gaussian Splatting Shannon Mutual Information for Active 3D Reconstruction</h1>
+    <h1>GauSS-MI: <br> 
+    Gaussian Splatting Shannon Mutual Information for Active 3D Reconstruction</h1>
     <strong>RSS 2025</strong>
     <br>
     Yuhan Xie, Yixi Cai, Yinqiang Zhang, Lei Yang, and Jia Pan
     <br>
-    <a href="https://www.roboticsproceedings.org/rss21/p030.pdf">paper</a> | <a href="https://arxiv.org/abs/2504.21067">arxiv</a> 
+    <a href="https://www.roboticsproceedings.org/rss21/p030.pdf">Paper</a> 
+    | <a href="https://arxiv.org/abs/2504.21067">arXiv</a> 
+    | <a href="https://youtu.be/Qi7QpDyayKs?si=bhfjW1hmP8o2Trik">YouTube</a> 
+    | <a href="https://www.bilibili.com/video/BV1rVNUziEFy">bilibili</a> 
 </div>
 
-<br>
+### 📢 News
+- **26 Jun. 2025**: GauSS-MI Code Release! 🔓
+- **28 May. 2025**: Submodule [Differential Gaussian Rasterization with GauSS-MI](https://github.com/JohannaXie/diff-gaussian-rasterization-gaussmi) released. 
+
+### 💡 Highlights
+**GauSS-MI** is a real-time active view selection metric for 3D Gaussian Splatting, optimizing high-visual-quality 3D reconstruction.
+<!-- <div align="center">
+<img src="misc/GauSS-MI-overview-white.png" width=99% />
+</div> -->
+
+<!-- **Demo:** -->
+<!-- <br> -->
 <div align="center">
     <img src="misc/sim-recon.gif" width=49.7% />
     <img src="misc/sim-result.gif" width = 49.7% >
@@ -17,17 +32,8 @@
     <img src="misc/rw-result.gif" width = 49.7% >
 </div>
 
-<!--**Method Overview:**
-<div align="center">
-<img src="misc/GauSS-MI-overview.png" width=99% />
-</div>-->
-
-### 📢 News
-- **30 May. 2025**: Complete code expected to be released by mid June.
-- **28 May. 2025**: Submodule [Differential Gaussian Rasterization with GauSS-MI](https://github.com/JohannaXie/diff-gaussian-rasterization-gaussmi) released. 
-
 ### 🔗 BibTeX
-If you find our code/work useful, please consider citing:
+If you find our code/work useful, please consider citing our work. Thank you!
 ```
 @article{xie2025gaussmi,
   title     = {GauSS-MI: Gaussian Splatting Shannon Mutual Information for Active 3D Reconstruction},
@@ -38,21 +44,81 @@ If you find our code/work useful, please consider citing:
 ```
 
 #### Acknowledgements
-This project builds heavily on [MonoGS](https://github.com/muskie82/MonoGS) and [3D Gaussian Splatting](https://github.com/graphdeco-inria/gaussian-splatting). We thanks the authors for their excellent works! If you use our code, please consider citing the papers as well.
+This project builds heavily on [MonoGS](https://github.com/muskie82/MonoGS) and [3D Gaussian Splatting](https://github.com/graphdeco-inria/gaussian-splatting). We thank the authors for their excellent work! If you use our code, please consider citing the papers as well.
 
-## Environment Setup
-#### Requirements
+## ⚙️ Environment Setup
+#### 0. Requirements
 * Most hardware and software requirements same as [3D Gaussian Splatting](https://github.com/graphdeco-inria/gaussian-splatting) Optimizer.
 * Conda (recommended for easy setup)
 * CUDA Toolkit 11.8
-* ROS1 Noetic + Ubuntu 20.04 (for active reconstruction part)
-#### Clone the Repository
+* [ROS1 Noetic](https://wiki.ros.org/noetic/Installation) + Ubuntu 20.04
+
+#### 1. Clone the Repository
 ```bash
+mkdir -p ~/ws_gaussmi/src && cd ~/ws_gaussmi/src    # ROS Workspace
 git clone git@github.com:JohannaXie/GauSS-MI.git --recursive
-cd GauSS-MI
 ```
-#### Conda Setup
+
+#### 2. Conda Setup
 ```bash
+cd GauSS-MI
 conda env create -f environment.yml
 conda activate GauSS-MI
 ```
+
+#### 3. Declare the Python path under your conda environment on the first line of `scripts/gs_map.py`, which could usually be `#!/home/{YourUserName}/anaconda3/envs/GauSS-MI/bin/python`.
+
+#### 4. ROS Setup
+```bash
+cd ~/ws_gaussmi
+catkin build -DPYTHON_EXECUTABLE=/home/{YourUserName}/anaconda3/envs/GauSS-MI/bin/python    # Your python path under conda
+```
+
+## 🚀 Quick Start
+#### Use example rosbag
+* Download the example robag [here](https://drive.google.com/drive/folders/1gnjs17tVXUiHU7rKAMtZDPmBt5acb1dn?usp=sharing).
+* Launch GauSS-MI
+    ```bash
+    conda activate GauSS-MI
+    cd ~/ws_gaussmi
+    source devel/setup.zsh
+    roslaunch gs_mapping gaussmi_rosbag_oildrum.launch
+    ```
+* Run rosbag in another terminal
+    ```bash
+    rosbag play GauSS-MI_example1_oildrum.bag
+    ```
+
+
+## 🦾 Implement on Your Robot
+#### ROS Publisher & Subscriber
+* Publish your collected RGB image, depth image, and camera pose at initialization viewpoints and the next-best-view on rostopic, respectively:
+    ```
+    /camera/bgr
+    /camera/depth
+    /camera/pose
+    ```
+* Subscribe to the next-best-view pose on rostopic:
+    ```
+    /gaussmi/nbv_pose
+    ```
+
+#### Simulation or Real-World Robot Implementation
+To implement our code on your robot with the motion planner and controller. You may need to customize the code in `scripts/active_recon/active_manage.py`. Specifically:
+* Robot Initialization
+* Collision Check
+* Robot Motion Planner & Waiting for Robot's Navigation.
+
+#### Customize Parameters
+You may need to customize the parameters for your reconstruction environment in the configuration file `configs/eg_data_config/active.yaml`.
+
+#### Launch GauSS-MI and Your Robot
+* Launch GauSS-MI
+    ```bash
+    conda activate GauSS-MI
+    cd ~/ws_gaussmi
+    source devel/setup.zsh
+    roslaunch gs_mapping gaussmi_active.launch
+    ```
+* Launch Your Robot
+

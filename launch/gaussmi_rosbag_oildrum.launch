@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Example launch file with rosbag. -->
+
+    <!-- Collect paths -->
+    <arg name="gs_config_path" default="$(find gs_mapping)/configs/online_gs_map.yaml" />
+    <arg name="dataconfig_path" default="$(find gs_mapping)/configs/eg_data_config/rosbag_oildrum.yaml" />
+    <arg name="package_path" default="$(find gs_mapping)" />
+
+    <!-- Main node -->
+    <node pkg="gs_mapping" type="gs_map.py" name="gaussian_node" output="screen">
+        <param name="config_path" value="$(arg gs_config_path)" />
+        <param name="dataconfig_path" value="$(arg dataconfig_path)" />
+        <param name="package_path" value="$(arg package_path)" />
+    </node>
+
+</launch>
