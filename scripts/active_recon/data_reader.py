@@ -59,6 +59,27 @@ class RosData(BaseDataset):
         self.projection_matrix = self.projection_matrix.to(device=self.device)
         self.depth_scale = calibration["depth_scale"]
 
+        # distortion parameters
+        self.distorted = calibration["distorted"]
+        if self.distorted:
+            self.dist_coeffs = np.array(
+                [
+                    calibration["k1"],
+                    calibration["k2"],
+                    calibration["p1"],
+                    calibration["p2"],
+                    calibration["k3"],
+                ]
+            )
+            self.map1x, self.map1y = cv2.initUndistortRectifyMap(
+                self.K,
+                self.dist_coeffs,
+                np.eye(3),
+                self.K,
+                (self.width, self.height),
+                cv2.CV_32FC1,
+            )
+
         # image subscribers
         self.bgr_sub = message_filters.Subscriber('/camera/bgr', ImageMsg, queue_size=1, buff_size=2**24 * 2)
         self.depth_sub = message_filters.Subscriber('/camera/depth', ImageMsg, queue_size=1, buff_size=2**24 * 2)
@@ -78,6 +99,8 @@ class RosData(BaseDataset):
 
         if (type(self.rgb_image) == np.ndarray) and (type(self.depth_image) == np.ndarray) and (self.cam_ori_pose is not None):
             RGBimage = cv2.cvtColor(self.rgb_image, cv2.COLOR_BGR2RGB)
+            if self.distorted:
+                image = cv2.remap(image, self.map1x, self.map1y, cv2.INTER_LINEAR)
             RGBimage = (
                 torch.from_numpy( RGBimage / 255.0)
                 .clamp(0.0, 1.0)
