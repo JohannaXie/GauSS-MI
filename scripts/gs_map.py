@@ -1,4 +1,5 @@
-#!/home/{YourUserName}/anaconda3/envs/GauSS-MI/bin/python
+#!/opt/conda/envs/GauSS-MI/bin/python
+
 import rospy
 from active_recon.active_manage import ActiveReconFSM
 from active_recon.data_reader import load_data

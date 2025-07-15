@@ -56,7 +56,8 @@ This project builds heavily on [MonoGS](https://github.com/muskie82/MonoGS) and 
 #### 1. Clone the Repository
 ```bash
 mkdir -p ~/ws_gaussmi/src && cd ~/ws_gaussmi/src    # ROS Workspace
-git clone git@github.com:JohannaXie/GauSS-MI.git --recursive
+git clone https://github.com/JohannaXie/GauSS-MI.git --recursive    # https
+# git clone git@github.com:JohannaXie/GauSS-MI.git --recursive        # ssh
 ```
 
 #### 2. Conda Setup
@@ -66,12 +67,58 @@ conda env create -f environment.yml
 conda activate GauSS-MI
 ```
 
-#### 3. Declare the Python path under your conda environment on the first line of `scripts/gs_map.py`, which could usually be `#!/home/{YourUserName}/anaconda3/envs/GauSS-MI/bin/python`.
+#### 3. Declare the Python path under your conda environment on the first line of `scripts/gs_map.py`, which could be `#!/opt/conda/envs/GauSS-MI/bin/python` or `#!/home/{YourUserName}/anaconda3/envs/GauSS-MI/bin/python`.
 
 #### 4. ROS Setup
 ```bash
 cd ~/ws_gaussmi
-catkin build -DPYTHON_EXECUTABLE=/home/{YourUserName}/anaconda3/envs/GauSS-MI/bin/python    # Your python path under conda
+catkin build -DPYTHON_EXECUTABLE=/opt/conda/envs/GauSS-MI/bin/python    # Your python path under conda
+```
+
+## 🐳 Quick Setup with Docker
+
+#### 1. Pull the docker image and build the container
+```bash
+# Pull Image
+docker pull johanna17/gauss-mi:v1
+# Run the Docker container
+docker run -it -d --gpus all -e DISPLAY \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e QT_X11_NO_MITSHM=1 \
+    -e NVIDIA_DRIVER_CAPABILITIES=all \
+    --shm-size=32G \
+    --ipc=host \
+    --network=host \
+    --cap-add SYS_PTRACE \
+    --cap-add SYS_ADMIN \
+    --privileged \
+    -v /dev:/dev \
+    --name=GauSS-MI \
+    -v $HOME/docker_envs/GauSS-MI:/home/do \
+    -u do \
+    -w /home/do \
+    johanna17/gauss-mi:v1
+# Go into the Container
+docker exec -it GauSS-MI bash
+# docker exec -itd GauSS-MI terminator  # Or use terminator
+```
+
+#### 2. [In Container] Activate ROS and Conda
+```bash
+source /opt/ros/noetic/setup.zsh
+source /opt/conda/bin/activate 
+/opt/conda/bin/conda init zsh
+```
+
+#### 3. [In Container] Clone the Repository and build
+```bash
+# Clone the repo
+mkdir -p ~/ws_gaussmi/src && cd ~/ws_gaussmi/src    # ROS Workspace
+git clone https://github.com/JohannaXie/GauSS-MI.git --recursive    # https
+# Build the ros package
+cd ~/ws_gaussmi
+catkin config --extend /opt/ros/noetic
+catkin build -DPYTHON_EXECUTABLE=/opt/conda/envs/GauSS-MI/bin/python
 ```
 
 ## 🚀 Quick Start
@@ -86,6 +133,7 @@ catkin build -DPYTHON_EXECUTABLE=/home/{YourUserName}/anaconda3/envs/GauSS-MI/bi
     ```
 * Run rosbag in another terminal
     ```bash
+    # source /opt/ros/noetic/setup.zsh
     rosbag play GauSS-MI_example1_oildrum.bag
     ```
 
