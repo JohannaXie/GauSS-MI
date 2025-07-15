@@ -12,6 +12,7 @@
 </div>
 
 ### 📢 News
+- **15 Jul. 2025**: 🐳 Docker image released. 
 - **26 Jun. 2025**: GauSS-MI Code Release! 🔓
 - **28 May. 2025**: Submodule [Differential Gaussian Rasterization with GauSS-MI](https://github.com/JohannaXie/diff-gaussian-rasterization-gaussmi) released. 
 
